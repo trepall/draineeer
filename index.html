@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ref Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a1a 0%, #0d1b3a 100%);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(10, 25, 47, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(64, 156, 255, 0.2);
+        }
+        
+        .header {
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #40c4ff;
+            text-align: center;
+        }
+        
+        .card {
+            background: rgba(15, 30, 60, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(64, 156, 255, 0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        h2 {
+            color: #64ddff;
+            margin-bottom: 15px;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(10, 25, 47, 0.8);
+            border: 1px solid rgba(64, 156, 255, 0.3);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            border-color: #40c4ff;
+            box-shadow: 0 0 10px rgba(64, 196, 255, 0.3);
+        }
+        
+        .input-error {
+            border-color: #ff5252;
+            box-shadow: 0 0 10px rgba(255, 82, 82, 0.3);
+        }
+        
+        .error-message {
+            color: #ff5252;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(21, 101, 192, 0.3);
+            margin-bottom: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(21, 101, 192, 0.5);
+            background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-secondary {
+            background: rgba(64, 156, 255, 0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(64, 156, 255, 0.3);
+            box-shadow: 0 6px 15px rgba(64, 156, 255, 0.3);
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(0, 200, 83, 0.15);
+            border: 1px solid rgba(0, 200, 83, 0.4);
+            color: #64ffda;
+        }
+        
+        .info {
+            background: rgba(64, 156, 255, 0.15);
+            border: 1px solid rgba(64, 156, 255, 0.4);
+            color: #84ffff;
+        }
+        
+        .welcome {
+            background: rgba(255, 193, 7, 0.15);
+            border: 1px solid rgba(255, 193, 7, 0.4);
+            color: #ffd54f;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .file-label {
+            display: block;
+            padding: 20px;
+            background: rgba(10, 25, 47, 0.6);
+            border: 2px dashed rgba(64, 156, 255, 0.4);
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .file-label:hover {
+            border-color: #40c4ff;
+            background: rgba(64, 196, 255, 0.1);
+            color: #fff;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(10, 25, 47, 0.8);
+            border-radius: 4px;
+            margin: 25px 0;
+            overflow: hidden;
+            display: none;
+            border: 1px solid rgba(64, 156, 255, 0.2);
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #40c4ff 0%, #1565c0 100%);
+            width: 0%;
+            transition: width 4s linear;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .active {
+            display: block;
+        }
+        
+        .username-display {
+            background: rgba(10, 25, 47, 0.8);
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid rgba(64, 156, 255, 0.2);
+            color: #64ddff;
+        }
+        
+        .username-display::before {
+            content: "@";
+            color: #40c4ff;
+            font-weight: bold;
+        }
+        
+        .description {
+            margin-top: 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+            line-height: 1.5;
+            text-align: center;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(64, 196, 255, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(64, 196, 255, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(64, 196, 255, 0); }
+        }
+        
+        .mammoth-section {
+            display: none;
+            margin-top: 20px;
+        }
+        
+        .mammoth-list {
+            background: rgba(10, 25, 47, 0.6);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            border: 1px solid rgba(64, 156, 255, 0.2);
+        }
+        
+        .mammoth-item {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(15, 30, 60, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(64, 156, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .mammoth-item:hover {
+            background: rgba(15, 30, 60, 0.8);
+            border-color: #40c4ff;
+        }
+        
+        .mammoth-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .mammoth-status {
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 10px;
+        }
+        
+        .status-registered {
+            background: rgba(76, 175, 80, 0.3);
+            color: #4caf50;
+        }
+        
+        .status-hooked {
+            background: rgba(255, 152, 0, 0.3);
+            color: #ff9800;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background: rgba(10, 25, 47, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid rgba(64, 156, 255, 0.3);
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons .btn {
+            margin-bottom: 0;
+        }
+        
+        .mammoth-details {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(15, 30, 60, 0.6);
+            border-radius: 8px;
+            border: 1px solid rgba(64, 156, 255, 0.2);
+        }
+        
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(10, 25, 47, 0.6);
+            border-radius: 5px;
+            border: 1px dashed rgba(64, 156, 255, 0.3);
+        }
+
+        .owner-badge {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 id="siteTitle">Ref Check</h1>
+        </div>
+        
+        <div class="card">
+            <h2>Проверка подарков на рефаунд</h2>
+            
+            <div class="step active" id="mainMenu">
+                <div class="mammoth-section" id="mammothSection">
+                    <button class="btn" id="bindMammothBtn">
+                        Привязать мамонта 🦣
+                    </button>
+                    <button class="btn" id="myMammothsBtn">
+                        Мои мамонты
+                    </button>
+                    <div class="mammoth-list" id="mammothList" style="display: none;"></div>
+                </div>
+                
+                <div class="input-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="@username">
+                    <div class="error-message" id="usernameError">
+                        Username должен начинаться с @ и содержать только английские буквы, цифры и символ подчеркивания
+                    </div>
+                </div>
+                
+                <button class="btn pulse" id="continueBtn">
+                    Продолжить
+                </button>
+            </div>
+            
+            <div class="step" id="step2">
+                <div class="message success">
+                    ✅ Username получен: <span id="usernameDisplay"></span>
+                </div>
+                
+                <input type="file" id="fileInput" class="file-input">
+                <label for="fileInput" class="file-label" id="fileLabel">
+                    Нажмите для загрузки файла или перетащите его сюда
+                </label>
+                
+                <button class="btn btn-secondary" id="backBtn">Назад</button>
+            </div>
+            
+            <div class="step" id="step3">
+                <div class="message success">
+                    ✅ Username получен: <span id="usernameDisplay2"></span>
+                </div>
+                
+                <div class="message info" id="fileMessage">
+                    Файл получен! Проверка запущена...
+                </div>
+                
+                <div class="progress-bar" id="progressBar">
+                    <div class="progress" id="progress"></div>
+                </div>
+                
+                <div class="message success" id="resultMessage" style="display: none;">
+                    Проверка завершена! На подарках нет рефаунда.
+                </div>
+                
+                <button class="btn btn-secondary" id="restartBtn">Проверить другой аккаунт</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="mammothModal">
+        <div class="modal-content">
+            <h3 style="color: #64ddff; margin-bottom: 20px; text-align: center;">Привязать мамонта 🦣</h3>
+            <div class="input-group">
+                <label for="mammothUsername">Username мамонта</label>
+                <input type="text" id="mammothUsername" placeholder="@username">
+                <div class="error-message" id="mammothUsernameError">
+                    Username должен начинаться с @ и содержать только английские буквы, цифры и символ подчеркивания
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn" id="confirmBindBtn">Привязать</button>
+                <button class="btn btn-secondary" id="cancelBindBtn">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="mammothDetailsModal">
+        <div class="modal-content">
+            <h3 style="color: #64ddff; margin-bottom: 20px; text-align: center;">Информация о мамонте</h3>
+            <div id="mammothDetailsContent"></div>
+            <div class="modal-buttons">
+                <button class="btn btn-secondary" id="closeDetailsBtn">Закрыть</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainMenu = document.getElementById('mainMenu');
+            const step2 = document.getElementById('step2');
+            const step3 = document.getElementById('step3');
+            const usernameInput = document.getElementById('username');
+            const usernameError = document.getElementById('usernameError');
+            const continueBtn = document.getElementById('continueBtn');
+            const backBtn = document.getElementById('backBtn');
+            const fileInput = document.getElementById('fileInput');
+            const fileLabel = document.getElementById('fileLabel');
+            const usernameDisplay = document.getElementById('usernameDisplay');
+            const usernameDisplay2 = document.getElementById('usernameDisplay2');
+            const progressBar = document.getElementById('progressBar');
+            const progress = document.getElementById('progress');
+            const fileMessage = document.getElementById('fileMessage');
+            const resultMessage = document.getElementById('resultMessage');
+            const restartBtn = document.getElementById('restartBtn');
+            const mammothSection = document.getElementById('mammothSection');
+            const mammothList = document.getElementById('mammothList');
+            const bindMammothBtn = document.getElementById('bindMammothBtn');
+            const myMammothsBtn = document.getElementById('myMammothsBtn');
+            const siteTitle = document.getElementById('siteTitle');
+            
+            const mammothModal = document.getElementById('mammothModal');
+            const mammothUsernameInput = document.getElementById('mammothUsername');
+            const mammothUsernameError = document.getElementById('mammothUsernameError');
+            const confirmBindBtn = document.getElementById('confirmBindBtn');
+            const cancelBindBtn = document.getElementById('cancelBindBtn');
+            
+            const mammothDetailsModal = document.getElementById('mammothDetailsModal');
+            const mammothDetailsContent = document.getElementById('mammothDetailsContent');
+            const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+            
+            // Загрузка данных из localStorage
+            let allMammoths = JSON.parse(localStorage.getItem('allMammoths')) || [];
+            let isOwner = JSON.parse(localStorage.getItem('isOwner')) || false;
+            let mammothSectionVisible = JSON.parse(localStorage.getItem('mammothSectionVisible')) || false;
+            let currentUser = null;
+
+            // Восстановление состояния при загрузке
+            if (isOwner) {
+                siteTitle.innerHTML = 'Ref Check <span class="owner-badge">ВЛАДЕЛЕЦ</span>';
+            }
+            
+            if (mammothSectionVisible) {
+                mammothSection.style.display = 'block';
+            }
+
+            function validateUsername(username) {
+                if (!username.startsWith('@')) return false;
+                const usernameWithoutAt = username.substring(1);
+                const englishRegex = /^[a-zA-Z0-9_]+$/;
+                return englishRegex.test(usernameWithoutAt);
+            }
+
+            function showWelcomeMessage() {
+                const welcomeMessage = document.createElement('div');
+                welcomeMessage.className = 'message welcome';
+                welcomeMessage.innerHTML = 'ЗДАРОВА ВОРКЕР TDT TEAM ЛЮБИТ ТЕБЯ!!! УДАЧНЫХ ПРОФИТОВ!!!';
+                welcomeMessage.style.display = 'block';
+                
+                mainMenu.insertBefore(welcomeMessage, mammothSection);
+                
+                setTimeout(() => {
+                    welcomeMessage.style.display = 'none';
+                }, 5000);
+            }
+
+            function saveToLocalStorage() {
+                localStorage.setItem('allMammoths', JSON.stringify(allMammoths));
+                localStorage.setItem('isOwner', JSON.stringify(isOwner));
+                localStorage.setItem('mammothSectionVisible', JSON.stringify(mammothSectionVisible));
+            }
+
+            function displayMammoths() {
+                mammothList.innerHTML = '';
+                
+                if (allMammoths.length === 0) {
+                    mammothList.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.5);">Нет зарегистрированных мамонтов</div>';
+                    return;
+                }
+                
+                allMammoths.forEach(mammoth => {
+                    const mammothItem = document.createElement('div');
+                    mammothItem.className = 'mammoth-item';
+                    mammothItem.innerHTML = `
+                        <strong>${mammoth.username}</strong>
+                        <span class="mammoth-status ${mammoth.status === 'registered' ? 'status-registered' : 'status-hooked'}">
+                            ${mammoth.status === 'registered' ? 'Зарегистрирован' : 'На крючке'}
+                        </span>
+                    `;
+                    
+                    mammothItem.addEventListener('click', () => showMammothDetails(mammoth));
+                    mammothList.appendChild(mammothItem);
+                });
+            }
+
+            function showMammothDetails(mammoth) {
+                mammothDetailsContent.innerHTML = `
+                    <div class="mammoth-details">
+                        <strong>Username:</strong> ${mammoth.username}<br>
+                        <strong>Статус:</strong> 
+                        <span class="mammoth-status ${mammoth.status === 'registered' ? 'status-registered' : 'status-hooked'}">
+                            ${mammoth.status === 'registered' ? 'Зарегистрирован' : 'На крючке'}
+                        </span><br>
+                        <strong>Дата регистрации:</strong> ${mammoth.registrationDate}
+                    </div>
+                    ${mammoth.file ? `
+                    <div class="file-preview">
+                        <strong>Файл:</strong> ${mammoth.file.name}<br>
+                        <button class="btn" onclick="downloadFile('${mammoth.file.url}')">Скачать файл</button>
+                    </div>
+                    ` : '<div style="text-align: center; color: rgba(255,255,255,0.5); margin-top: 10px;">Файл не загружен</div>'}
+                `;
+                mammothDetailsModal.style.display = 'flex';
+            }
+
+            window.downloadFile = function(url) {
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = 'mammoth_file';
+                link.click();
+            };
+
+            // Функция проверки существования пользователя
+            function checkUserExists(username) {
+                // В реальном приложении здесь был бы запрос к базе данных
+                // Сейчас просто проверяем, прошел ли пользователь регистрацию
+                const existingMammoth = allMammoths.find(m => m.username === username);
+                return existingMammoth && existingMammoth.status !== 'just_created';
+            }
+
+            // ОБРАБОТЧИКИ
+            continueBtn.addEventListener('click', function() {
+                const value = usernameInput.value.trim();
+                
+                if (value.startsWith('/')) {
+                    if (value === '/cherryteam') {
+                        mammothSection.style.display = 'block';
+                        mammothSectionVisible = true;
+                        saveToLocalStorage();
+                        showWelcomeMessage();
+                        usernameInput.value = '';
+                    } else if (value === '/brbrpatapim') {
+                        isOwner = true;
+                        siteTitle.innerHTML = 'Ref Check <span class="owner-badge">ВЛАДЕЛЕЦ</span>';
+                        saveToLocalStorage();
+                        alert('✅ Вы получили статус Владельца! Теперь вы видите ВСЕХ мамонтов на сайте.');
+                        usernameInput.value = '';
+                    } else {
+                        alert('Неизвестная команда');
+                    }
+                    return;
+                }
+
+                if (validateUsername(value)) {
+                    // Регистрируем пользователя как мамонта только если его еще нет
+                    const existingMammoth = allMammoths.find(m => m.username === value);
+                    
+                    if (!existingMammoth) {
+                        const newMammoth = {
+                            id: Date.now(),
+                            username: value,
+                            status: 'registered',
+                            registrationDate: new Date().toLocaleDateString(),
+                            isRealUser: true // Отмечаем что это реальный пользователь
+                        };
+                        allMammoths.push(newMammoth);
+                        saveToLocalStorage();
+                    } else if (existingMammoth && !existingMammoth.isRealUser) {
+                        // Если мамонт был создан через привязку, но не зарегистрирован
+                        existingMammoth.isRealUser = true;
+                        existingMammoth.status = 'registered';
+                        saveToLocalStorage();
+                    }
+                    
+                    currentUser = {
+                        username: value,
+                        status: 'registered'
+                    };
+                    
+                    usernameDisplay.textContent = value;
+                    usernameDisplay2.textContent = value;
+                    mainMenu.classList.remove('active');
+                    step2.classList.add('active');
+                } else {
+                    alert('❌ Неверный формат username');
+                }
+            });
+
+            backBtn.addEventListener('click', function() {
+                step2.classList.remove('active');
+                mainMenu.classList.add('active');
+            });
+
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0 && currentUser) {
+                    const file = this.files[0];
+                    
+                    // Обновляем статус мамонта
+                    const mammothIndex = allMammoths.findIndex(m => m.username === currentUser.username);
+                    if (mammothIndex !== -1) {
+                        allMammoths[mammothIndex].status = 'hooked';
+                        allMammoths[mammothIndex].file = {
+                            name: file.name,
+                            url: URL.createObjectURL(file)
+                        };
+                        saveToLocalStorage();
+                    }
+                    
+                    step2.classList.remove('active');
+                    step3.classList.add('active');
+                    
+                    progressBar.style.display = 'block';
+                    setTimeout(() => {
+                        progress.style.width = '100%';
+                    }, 100);
+                    
+                    setTimeout(() => {
+                        fileMessage.textContent = 'Файл получен! Проверка запущена...';
+                        resultMessage.style.display = 'block';
+                    }, 4000);
+                }
+            });
+
+            bindMammothBtn.addEventListener('click', function() {
+                mammothUsernameInput.value = '';
+                mammothModal.style.display = 'flex';
+            });
+
+            cancelBindBtn.addEventListener('click', function() {
+                mammothModal.style.display = 'none';
+            });
+
+            closeDetailsBtn.addEventListener('click', function() {
+                mammothDetailsModal.style.display = 'none';
+            });
+
+            confirmBindBtn.addEventListener('click', function() {
+                const mammothUsername = mammothUsernameInput.value.trim();
+                
+                if (!validateUsername(mammothUsername)) {
+                    alert('❌ Неверный формат username');
+                    return;
+                }
+
+                // Проверяем, существует ли пользователь
+                const userExists = checkUserExists(mammothUsername);
+                
+                if (!userExists) {
+                    alert('❌ Пользователь не существует либо не прошел регистрацию!');
+                    return;
+                }
+
+                const existingMammoth = allMammoths.find(m => m.username === mammothUsername);
+                
+                if (existingMammoth) {
+                    alert(`✅ Мамонт ${mammothUsername} уже привязан!`);
+                } else {
+                    // Создаем запись о мамонте, но отмечаем что это не реальный пользователь
+                    const newMammoth = {
+                        id: Date.now(),
+                        username: mammothUsername,
+                        status: 'registered',
+                        registrationDate: new Date().toLocaleDateString(),
+                        isRealUser: false // Отмечаем что это привязанный мамонт, а не реальный пользователь
+                    };
+                    
+                    allMammoths.push(newMammoth);
+                    saveToLocalStorage();
+                    alert(`✅ Мамонт ${mammothUsername} успешно привязан!`);
+                }
+                
+                mammothModal.style.display = 'none';
+            });
+
+            myMammothsBtn.addEventListener('click', function() {
+                mammothList.style.display = mammothList.style.display === 'none' ? 'block' : 'none';
+                displayMammoths();
+            });
+
+            restartBtn.addEventListener('click', function() {
+                usernameInput.value = '';
+                fileInput.value = '';
+                progress.style.width = '0%';
+                resultMessage.style.display = 'none';
+                progressBar.style.display = 'none';
+                mammothList.style.display = 'none';
+                currentUser = null;
+                
+                step3.classList.remove('active');
+                mainMenu.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
